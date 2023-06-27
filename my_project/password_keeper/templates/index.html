@@ -8,18 +8,52 @@
   </head>
   <body>
     <div class="container pt-5">
-      <form method="POST">
+      <form method="POST" action="/add">
+        {% csrf_token %}
         <div class="mb-3">
           <label for="appname" class="form-label">App name:</label>
-          <input type="text" class="form-control" id="appname">
+          <input type="text" class="form-control" id="appname" name="appname">
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Password:</label>
-          <input type="password" class="form-control" id="password">
+          <input type="password" class="form-control" id="password" name="password">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary mt-3 mb-5">Submit</button>
       </form>
+
+      {% if messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          {% for message in messages %}
+          {{ message }}
+          {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+
+      {% if decrypted_password %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          Your password for {{ app_name }} is <strong>{{ decrypted_password }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+
+      <h3 class="mb-3">Your saved passwords</h3>
+
+      <ol class="list-group list-group-numbered">
+        {% for app in app_list %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ app.app_name|title }}</div>
+            {{ app.created_at }}
+          </div>
+          <form method="GET" action="/decrypt/{{ app.id }}">
+            <button class="btn btn-primary btn-sm mt-2" type="submit">View Password</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ol>
     </div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
