@@ -70,4 +70,5 @@ def signin_view(request):
 
 
 def signout_view(request):
-    pass
+    logout(request)
+    return redirect('sign_in')
