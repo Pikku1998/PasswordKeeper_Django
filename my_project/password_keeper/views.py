@@ -30,3 +30,15 @@ def decrypt_view(request, app_id):
     return render(request, index_page, context={'app_name': app_name,
                                                 'decrypted_password': decrypted_password,
                                                 'app_list': app_list})
+
+
+def signup_view(request):
+    return render(request, 'sign_up.html')
+
+
+def signin_view(request):
+    return render(request, 'sign_in.html')
+
+
+def signout_view(request):
+    pass
