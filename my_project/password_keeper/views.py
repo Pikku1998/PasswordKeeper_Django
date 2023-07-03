@@ -4,28 +4,36 @@ from .models import AppPassword
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='sign_in')
 def index_view(request):
+    user = request.user
     index_page = 'index.html'
-    app_list = AppPassword.objects.all()
+    app_list = AppPassword.objects.filter(user=user)
     return render(request, index_page, context={'app_list': app_list})
 
 
+@login_required(login_url='sign_in')
 def add_view(request):
+    user = request.user
     app_name = request.POST['appname']
     password = request.POST['password']
     AppPassword.objects.create(
         app_name=app_name,
-        password=encrypt(password)
+        password=encrypt(password),
+        user=user
     )
     messages.success(request, "Added successfully.")
     return redirect('index')
 
 
+@login_required(login_url='sign_in')
 def decrypt_view(request, app_id):
+    user = request.user
     index_page = 'index.html'
-    app_list = AppPassword.objects.all()
+    app_list = AppPassword.objects.filter(user=user)
     password_obj = AppPassword.objects.get(pk=app_id)
     app_name = password_obj.app_name
     decrypted_password = decrypt(password_obj.password)
